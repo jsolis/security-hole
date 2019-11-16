@@ -1,16 +1,27 @@
 const axios = require("axios");
 
 exports.proxy = async (request) => {
-  const fetchURL = request.header('fetchURL');
   const method = request.method.toLowerCase();
+  const reqHeaders = request.headers;
+  const fetchURL = reqHeaders.fetchurl;
+  console.log('fetchURL', fetchURL);
+
+  delete reqHeaders.fetchurl;
+
   // TODO - add POST support
-  // * pass headers
+  // x pass headers
   // * pass post body
   try {
     const response = await axios[method](fetchURL, {
+      headers: {
+        authorization: reqHeaders.authorization,
+      },
       validateStatus: status => true,
     });
     const { data, status, headers } = response;
+
+    delete headers['cache-control'];
+    delete headers['strict-transport-security'];
     
     return({
       status,
