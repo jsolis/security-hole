@@ -3,6 +3,7 @@
 
 // init project
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const proxy = require("./proxy.js");
 
@@ -13,6 +14,7 @@ const proxy = require("./proxy.js");
 app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 app.set('x-powered-by', false);
 
 // http://expressjs.com/en/starter/basic-routing.html
@@ -23,14 +25,12 @@ app.get("/", function(request, response) {
 app.get("/proxy", async (request, response) => {
   const proxyResponse = await proxy.proxy(request);
   const { status, headers, data } = proxyResponse;
-  headers['Access-Control-Allow-Origin'] = '*';
   response.status(status).set(headers).json(data);
 });
 
 app.post("/proxy", async (request, response) => {
   const proxyResponse = await proxy.proxy(request);
   const { status, headers, data } = proxyResponse;
-  headers['Access-Control-Allow-Origin'] = '*';
   response.status(status).set(headers).json(data);
 });
 
